@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 int parse_args(int argc, char **argv, char *peer_str_addr, enum ControlScheme control_scheme, int *err) {
     int opt;
@@ -29,3 +30,24 @@ int parse_args(int argc, char **argv, char *peer_str_addr, enum ControlScheme co
     }
     return 0;
 }
+
+int parse_input_type(char *str, enum ControlScheme *control_scheme) {
+    if(strcasecmp(str, "keyboard") == 0) {
+        *control_scheme = KEYBOARD;
+        return 0;
+    }
+    if(strcasecmp(str, "controller" == 0)) {
+        *control_scheme = CONTROLLER;
+        return 0;
+    }
+    if(strcasecmp(str, "timer" == 0)) {
+        *control_scheme = TIMER;
+        return 0;
+    }
+    return 1;
+}
+
+void usage(void) {
+    printf("Usage: "); //remember to fill in
+}
+
