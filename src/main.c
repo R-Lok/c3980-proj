@@ -18,6 +18,7 @@ int main(int argc, char **argv)
     struct sockaddr_in my_addr;
     struct sockaddr_in peer_addr;
     int                ret;
+    int                socket_fd;
 
     ret            = EXIT_SUCCESS;
     port           = DEFAULT_PORT;
@@ -31,11 +32,20 @@ int main(int argc, char **argv)
         ret = EXIT_FAILURE;
         goto arg_error;
     }
+    err = 0;
     if(setup_addrs(&my_addr, &peer_addr, peer_str_addr, port, &err))
     {
         printError(err, "Supplied address is not an IPv4 address");
         usage();
         ret = EXIT_FAILURE;
+        goto arg_error;
+    }
+    err = 0;
+
+    socket_fd = setup_socket(&my_addr, &err);
+    if(socket_fd == -1)
+    {
+        printError(err, "");
         goto arg_error;
     }
 
