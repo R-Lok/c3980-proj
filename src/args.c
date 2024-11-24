@@ -7,7 +7,7 @@
 int parse_input_type(const char *str, enum ControlScheme *control_scheme);
 int check_args(const char *peer_str_addr, const enum ControlScheme *control_scheme, int *err);
 
-int parse_args(int argc, char **argv, char **peer_str_addr, enum ControlScheme control_scheme, int *err)
+int parse_args(int argc, char **argv, char **peer_str_addr, enum ControlScheme *control_scheme, int *err)
 {
     int opt;
 
@@ -19,7 +19,7 @@ int parse_args(int argc, char **argv, char **peer_str_addr, enum ControlScheme c
                 *peer_str_addr = optarg;
                 break;
             case 'i':
-                if(parse_input_type(optarg, &control_scheme))
+                if(parse_input_type(optarg, control_scheme))
                 {
                     *err = EINVAL;
                     return 1;
