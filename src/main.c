@@ -30,7 +30,7 @@ int main(int argc, char **argv)
         printError(err, "Error parsing arguments\n");
         usage();
         ret = EXIT_FAILURE;
-        goto arg_error;
+        goto exit_label;
     }
     err = 0;
     if(setup_addrs(&my_addr, &peer_addr, peer_str_addr, port, &err))
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
         printError(err, "Supplied address is not an IPv4 address");
         usage();
         ret = EXIT_FAILURE;
-        goto arg_error;
+        goto exit_label;
     }
     err = 0;
 
@@ -46,10 +46,10 @@ int main(int argc, char **argv)
     if(socket_fd == -1)
     {
         printError(err, "");
-        goto arg_error;
+        goto exit_label;
     }
 
-arg_error:
+exit_label:
     return ret;
 }
 
