@@ -34,7 +34,7 @@ int parse_args(int argc, char **argv, char **peer_str_addr, enum ControlScheme *
                 return 1;
         }
     }
-    return check_args(*peer_str_addr, &control_scheme, err);
+    return check_args(*peer_str_addr, control_scheme, err);
 }
 
 int parse_input_type(const char *str, enum ControlScheme *control_scheme)
