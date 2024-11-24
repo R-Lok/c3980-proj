@@ -16,7 +16,7 @@ int setup_addrs(struct sockaddr_in *my_addr, struct sockaddr_in *peer_addr, char
 
     if(inet_pton(AF_INET, addr, &(my_addr->sin_addr)) != 1)
     {
-        *err = errno;
+        *err = EINVAL;
         return 1;
     }
 
@@ -25,7 +25,7 @@ int setup_addrs(struct sockaddr_in *my_addr, struct sockaddr_in *peer_addr, char
 
     if(inet_pton(AF_INET, peer_str_addr, &(peer_addr->sin_addr)) != 1)
     {
-        *err = errno;
+        *err = EINVAL;
         return 1;
     }
     return 0;

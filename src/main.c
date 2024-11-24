@@ -24,12 +24,12 @@ int main(int argc, char **argv)
 
     if(parse_args(argc, argv, &peer_str_addr, &control_scheme, &err))
     {
-        printError(err, "Error parsing arguments");
+        printError(err, "Error parsing arguments\n");
         usage();
     }
     if(setup_addrs(&my_addr, &peer_addr, peer_str_addr, port, &err))
     {
-        printError(err, "Error setting up address structs");
+        printError(err, "Supplied address is not an IPv4 address");
         usage();
     }
 
@@ -38,5 +38,5 @@ int main(int argc, char **argv)
 
 void printError(int err, const char *msg)
 {
-    fprintf(stderr, "Error: %s :%s", msg, strerror(err));
+    fprintf(stderr, "Error: %s :%s\n", msg, strerror(err));
 }
