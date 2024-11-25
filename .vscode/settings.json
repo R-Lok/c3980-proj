@@ -4,6 +4,7 @@
         "args.h": "c",
         "screen.h": "c",
         "ncurses.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "io.h": "c"
     }
 }
