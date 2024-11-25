@@ -26,6 +26,9 @@ int main(int argc, char **argv)
     int                socket_fd;
     WINDOW            *win;
 
+    struct PlayerInfo my_player;
+    struct PlayerInfo peer_player;
+
     ret            = EXIT_SUCCESS;
     port           = DEFAULT_PORT;
     peer_str_addr  = NULL;
@@ -59,6 +62,11 @@ int main(int argc, char **argv)
     {
         printError(NCURSES_ERROR, "Failed to allocate window using newwin()");
     }
+
+    setup_player_structs(&my_player, &peer_player, X_BOUNDARY, Y_BOUNDARY);
+
+    printf("%u, %u, %u, %u\n", my_player.playing, my_player.seq_counter, my_player.x, my_player.y);
+    printf("%u, %u, %u, %u", peer_player.playing, peer_player.seq_counter, peer_player.x, peer_player.y);
 
 exit_label:
     return ret;

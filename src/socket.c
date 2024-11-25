@@ -62,6 +62,13 @@ int setup_socket(struct sockaddr_in *my_addr, int *err)
         goto fail;
     }
 
+    if(bind(socket_fd, (struct sockaddr *)my_addr, sizeof(struct sockaddr_in)) != 0)
+    {
+        *err = errno;
+        fprintf(stderr, "Failed to bind socket\n");
+        goto fail;
+    }
+
     return socket_fd;
 fail:
     close(socket_fd);

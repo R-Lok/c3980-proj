@@ -4,9 +4,13 @@
 
 struct PlayerInfo
 {
+    // cppcheck-suppress unusedStructMember
     uint16_t playing;
+    // cppcheck-suppress unusedStructMember
     uint16_t seq_counter;
+    // cppcheck-suppress unusedStructMember
     uint16_t x;
+    // cppcheck-suppress unusedStructMember
     uint16_t y;
 };
 
