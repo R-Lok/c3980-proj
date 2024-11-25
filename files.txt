@@ -1,1 +1,1 @@
-main src/main.c src/args.c src/socket.c include/args.h include/socket.h
+main src/main.c src/args.c src/socket.c src/screen.c src/game.c include/args.h include/socket.h include/screen.h include/game.h ncurses

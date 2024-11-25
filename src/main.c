@@ -1,4 +1,6 @@
 #include "../include/args.h"
+#include "../include/game.h"
+#include "../include/screen.h"
 #include "../include/socket.h"
 #include <ncurses.h>
 #include <netinet/in.h>
@@ -6,6 +8,9 @@
 #include <string.h>
 
 #define DEFAULT_PORT 9999
+#define X_BOUNDARY 100
+#define Y_BOUNDARY 50
+#define NCURSES_ERROR 1001
 
 void printError(int err, const char *msg);
 
@@ -19,11 +24,13 @@ int main(int argc, char **argv)
     struct sockaddr_in peer_addr;
     int                ret;
     int                socket_fd;
+    WINDOW            *win;
 
     ret            = EXIT_SUCCESS;
     port           = DEFAULT_PORT;
     peer_str_addr  = NULL;
     control_scheme = NOT_SET;
+    win            = NULL;
 
     if(parse_args(argc, argv, &peer_str_addr, &control_scheme, &err))
     {
@@ -48,6 +55,10 @@ int main(int argc, char **argv)
         printError(err, "");
         goto exit_label;
     }
+    if(init_screen(win, X_BOUNDARY, Y_BOUNDARY))
+    {
+        printError(NCURSES_ERROR, "Failed to allocate window using newwin()");
+    }
 
 exit_label:
     return ret;
@@ -55,5 +66,10 @@ exit_label:
 
 void printError(int err, const char *msg)
 {
+    if(err == NCURSES_ERROR)
+    {
+        fprintf(stderr, "Error: %s", msg);
+        return;
+    }
     fprintf(stderr, "Error: %s :%s\n", msg, strerror(err));
 }
