@@ -33,8 +33,12 @@ int wait_for_connection(int sock_fd, struct sockaddr_in *peer_addr, const struct
         // print an err message
         return 1;
     }
-    // WIP receive_player_info
     if(receive_player_info(sock_fd, peer_addr, peer_player))    // needs to deal with playing var
+    {
+        // print an err message
+        return 1;
+    }
+    if(send_player_info(sock_fd, my_player, peer_addr))    // redunant sending of my_player again in case peer opened program after first send
     {
         // print an err message
         return 1;

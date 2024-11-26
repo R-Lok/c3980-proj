@@ -71,9 +71,8 @@ int main(int argc, char **argv)
     // printf("%u, %u, %u, %u\n", my_player.playing, my_player.seq_counter, my_player.x, my_player.y);
     // printf("%u, %u, %u, %u", peer_player.playing, peer_player.seq_counter, peer_player.x, peer_player.y);
 
-    wait_for_connection(socket_fd, &peer_addr, &my_player, &peer_player, win, &playing);
+    wait_for_connection(socket_fd, &peer_addr, &my_player, &peer_player, win, &playing);    // need var to get result, check result
 
-    wrefresh(win);
     getch();
 
 exit_label:
