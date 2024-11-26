@@ -1,7 +1,7 @@
 #include "io.h"
 #include <errno.h>
 
-void *pickle_player_info(const struct PlayerInfo *my_player, uint16_t *pickled_array) {
+void pickle_player_info(const struct PlayerInfo *my_player, uint16_t *pickled_array) {
 
     pickled_array[0] = htons(my_player->playing);
     pickled_array[1] = htons(my_player->seq_counter);
@@ -21,14 +21,14 @@ int send_full(int sock_fd, uint16_t *pickled_player, size_t pickle_bytelength, c
                 errno = 0;
                 continue;
             }
-            return 1;
+            return -1;
         }
         twrote += (size_t) nwrote;
     } while (twrote < pickle_bytelength);
     return 0;
 }
 
-int send_player_info(int sock_fd, const struct PlayerInfo *my_player, const struct sockaddr_in peer_addr) {
+int send_player_info(int sock_fd, const struct PlayerInfo *my_player, const struct sockaddr_in *peer_addr) {
     uint16_t pickled_player[4];
 
     pickle_player_info(my_player, pickled_player);

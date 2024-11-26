@@ -27,12 +27,12 @@ int wait_for_connection(int sock_fd, struct sockaddr_in peer_addr, struct Player
         // print an err message
         return 1;
     }
-    if(send_player_info(sock_fd, my_player, peer_addr))
+    if(send_player_info(sock_fd, my_player, &peer_addr))
     {
         // print an err message
         return 1;
     }
-    //WIP receive_player_info
+    // WIP receive_player_info
 
     return 0;
 }
