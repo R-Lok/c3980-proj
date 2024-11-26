@@ -25,6 +25,7 @@ int main(int argc, char **argv)
     int                ret;
     int                socket_fd;
     WINDOW            *win;
+    uint16_t           playing;
 
     struct PlayerInfo my_player;
     struct PlayerInfo peer_player;
@@ -34,6 +35,7 @@ int main(int argc, char **argv)
     peer_str_addr  = NULL;
     control_scheme = NOT_SET;
     win            = NULL;
+    playing        = 1;
 
     if(parse_args(argc, argv, &peer_str_addr, &control_scheme, &err))
     {
@@ -58,15 +60,21 @@ int main(int argc, char **argv)
         printError(err, "");
         goto exit_label;
     }
-    if(init_screen(win, X_BOUNDARY, Y_BOUNDARY))
+    if(init_screen(&win, X_BOUNDARY, Y_BOUNDARY))
     {
-        printError(NCURSES_ERROR, "Failed to allocate window using newwin()");
+        printError(NCURSES_ERROR, "Failed to allocate window using newwin()\n");
     }
+    // printf("win: %i\n", win == NULL);
 
     setup_player_structs(&my_player, &peer_player, X_BOUNDARY, Y_BOUNDARY);
 
-    printf("%u, %u, %u, %u\n", my_player.playing, my_player.seq_counter, my_player.x, my_player.y);
-    printf("%u, %u, %u, %u", peer_player.playing, peer_player.seq_counter, peer_player.x, peer_player.y);
+    // printf("%u, %u, %u, %u\n", my_player.playing, my_player.seq_counter, my_player.x, my_player.y);
+    // printf("%u, %u, %u, %u", peer_player.playing, peer_player.seq_counter, peer_player.x, peer_player.y);
+
+    wait_for_connection(socket_fd, &peer_addr, &my_player, &peer_player, win, &playing);
+
+    wrefresh(win);
+    getch();
 
 exit_label:
     return ret;

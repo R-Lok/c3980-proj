@@ -17,6 +17,6 @@ struct PlayerInfo
 };
 
 void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_player, int x_boundary, int y_boundary);
-int  wait_for_connection(int sock_fd, struct sockaddr_in peer_addr, struct PlayerInfo *my_player, struct PlayerInfo *peer_player, WINDOW *win, uint16_t *playing);
+int  wait_for_connection(int sock_fd, struct sockaddr_in *peer_addr, const struct PlayerInfo *my_player, struct PlayerInfo *peer_player, WINDOW *win, const uint16_t *playing);
 
 #endif
