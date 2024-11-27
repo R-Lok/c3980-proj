@@ -1,6 +1,7 @@
 #include "../include/game.h"
 #include "../include/io.h"
 #include "../include/screen.h"
+#include "../include/threadfuncs.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
