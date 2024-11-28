@@ -110,8 +110,9 @@ int receive_player_info(int sock_fd, struct sockaddr_in *peer_addr, struct Playe
     }
 
     unpickle_player(pickled_player, &received_player);
-    if(is_stale_data(&received_player, peer_player))
+    if(is_stale_data(&received_player, peer_player) == 0)
     {
+        // needs mutex
         peer_player->playing     = received_player.playing;
         peer_player->seq_counter = received_player.seq_counter;
         peer_player->x           = received_player.x;

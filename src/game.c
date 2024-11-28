@@ -12,8 +12,8 @@ void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_
     memset(my_player, 0, sizeof(struct PlayerInfo));
     memset(peer_player, 0, sizeof(struct PlayerInfo));
 
-    my_player->x       = (uint16_t)(arc4random_uniform((uint32_t)x_boundary + 1)); //change to POSIX compliant random 
-    my_player->y       = (uint16_t)(arc4random_uniform((uint32_t)y_boundary + 1)); //change to POSIX compliant random
+    my_player->x       = (uint16_t)(arc4random_uniform((uint32_t)x_boundary + 1));    // change to POSIX compliant random
+    my_player->y       = (uint16_t)(arc4random_uniform((uint32_t)y_boundary + 1));    // change to POSIX compliant random
     my_player->playing = 1;
 }
 

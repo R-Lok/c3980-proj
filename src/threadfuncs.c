@@ -133,3 +133,43 @@ void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x)
             break;
     }
 }
+
+void *timer_routine(void *thread_args)
+{
+    struct GameSyncArgs *args;
+    int                 *return_val;
+
+    args       = (struct GameSyncArgs *)thread_args;
+    return_val = (int *)malloc(sizeof(int));
+    if(return_val == NULL)
+    {
+        fprintf(stderr, "Malloc failed to allocate memory\n");
+        return NULL;
+    }
+    *return_val = EXIT_SUCCESS;
+
+    while(*(args->playing))
+    {
+        const int choices[4] = {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT};
+        int       simulated_key_press;
+        int       handle_char_res;
+
+        srandom((unsigned int)time(NULL));    // NOLINT(cert-msc32-c,cert-msc51-cpp)
+        simulated_key_press = choices[random() % 4]; //generates a warning, but we don't care about the security of how moves are generated.
+
+        handle_char_res = handle_pressed_char(simulated_key_press, args->player, args->lock);
+        if(handle_char_res == 1)
+        {
+            *(args->playing) = 0;
+            *return_val      = EXIT_FAILURE;
+            return return_val;
+        }
+        if(handle_char_res == 0 && send_player_info(args->sock_fd, args->player, args->peeraddr))
+        {
+            *(args->playing) = 0;
+            *return_val      = EXIT_FAILURE;
+            return return_val;
+        }
+    }
+    return return_val;
+}
