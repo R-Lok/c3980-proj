@@ -3,6 +3,7 @@
 int init_screen(WINDOW **win, int x_boundary, int y_boundary)
 {
     initscr();
+    noecho();
     *win = newwin(y_boundary + 1, x_boundary + 1, 0, 0);
     if(*win == NULL)
     {
