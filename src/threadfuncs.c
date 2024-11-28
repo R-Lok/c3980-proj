@@ -173,3 +173,13 @@ void *timer_routine(void *thread_args)
     }
     return return_val;
 }
+
+void process_thread_res(int thread_join_res, int thread_routine_res, int *ret) {
+    if(thread_join_res != 0) {
+        perror("pthread_join error");
+        *ret = EXIT_FAILURE;
+    }
+    if(thread_routine_res != 0) {
+        *ret = EXIT_FAILURE; //no error message here as it is already printed within thread routine.
+    }
+}
