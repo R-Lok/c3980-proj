@@ -2,7 +2,6 @@
 #include "../include/game.h"
 #include "../include/io.h"
 #include <ncurses.h>
-#include <pthread.h>
 #include <stdlib.h>
 
 int  handle_pressed_char(int pressed_char, struct PlayerInfo *my_player, pthread_mutex_t *lock);
@@ -185,4 +184,19 @@ void process_thread_res(int thread_join_res, int thread_routine_res, int *ret)
     {
         *ret = EXIT_FAILURE;    // no error message here as it is already printed within thread routine.
     }
+}
+
+int init_mutex(pthread_mutex_t *lock)
+{
+    int ret;
+    int res;
+    ret = 0;
+
+    res = pthread_mutex_init(lock, NULL);
+    if(res != 0)
+    {
+        fprintf(stderr, "pthread_mutex_init err\n");
+        ret = 1;
+    }
+    return ret;
 }
