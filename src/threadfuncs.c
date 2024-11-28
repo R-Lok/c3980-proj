@@ -154,8 +154,8 @@ void *timer_routine(void *thread_args)
         int       simulated_key_press;
         int       handle_char_res;
 
-        srandom((unsigned int)time(NULL));    // NOLINT(cert-msc32-c,cert-msc51-cpp)
-        simulated_key_press = choices[random() % 4]; //generates a warning, but we don't care about the security of how moves are generated.
+        srandom((unsigned int)time(NULL));              // NOLINT(cert-msc32-c,cert-msc51-cpp)
+        simulated_key_press = choices[random() % 4];    // generates a warning, but we don't care about the security of how moves are generated.
 
         handle_char_res = handle_pressed_char(simulated_key_press, args->player, args->lock);
         if(handle_char_res == 1)
@@ -174,12 +174,15 @@ void *timer_routine(void *thread_args)
     return return_val;
 }
 
-void process_thread_res(int thread_join_res, int thread_routine_res, int *ret) {
-    if(thread_join_res != 0) {
+void process_thread_res(int thread_join_res, int thread_routine_res, int *ret)
+{
+    if(thread_join_res != 0)
+    {
         perror("pthread_join error");
         *ret = EXIT_FAILURE;
     }
-    if(thread_routine_res != 0) {
-        *ret = EXIT_FAILURE; //no error message here as it is already printed within thread routine.
+    if(thread_routine_res != 0)
+    {
+        *ret = EXIT_FAILURE;    // no error message here as it is already printed within thread routine.
     }
 }

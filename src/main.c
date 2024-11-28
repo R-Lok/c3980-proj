@@ -15,7 +15,7 @@ void printError(int err, const char *msg);
 int main(int argc, char **argv)
 {
     char              *peer_str_addr;
-    enum ControlScheme control_scheme;
+    input_handler      thread_func;
     int                err;
     in_port_t          port;
     struct sockaddr_in my_addr;
@@ -29,14 +29,14 @@ int main(int argc, char **argv)
     struct PlayerInfo peer_player;
     struct GameData   game_data;
 
-    ret            = EXIT_SUCCESS;
-    port           = DEFAULT_PORT;
-    peer_str_addr  = NULL;
-    control_scheme = NOT_SET;
-    win            = NULL;
-    playing        = 1;
+    ret           = EXIT_SUCCESS;
+    port          = DEFAULT_PORT;
+    peer_str_addr = NULL;
+    thread_func   = NULL;
+    win           = NULL;
+    playing       = 1;
 
-    if(parse_args(argc, argv, &peer_str_addr, &control_scheme, &err))
+    if(parse_args(argc, argv, &peer_str_addr, &thread_func, &err))
     {
         printError(err, "Error parsing arguments\n");
         usage();
