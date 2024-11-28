@@ -8,8 +8,6 @@
 #include <string.h>
 
 #define DEFAULT_PORT 9999
-#define X_BOUNDARY 100
-#define Y_BOUNDARY 50
 #define NCURSES_ERROR 1001
 
 void printError(int err, const char *msg);

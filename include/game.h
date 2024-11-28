@@ -4,6 +4,11 @@
 #include <netinet/in.h>
 #include <stdint.h>
 
+#define X_BOUNDARY 100
+#define Y_BOUNDARY 50
+#define X_BOUNDARY_MIN 0
+#define Y_BOUNDARY_MIN 0
+
 struct PlayerInfo
 {
     // cppcheck-suppress unusedStructMember
@@ -32,11 +37,17 @@ struct GameData
     uint16_t *playing;
 };
 
-struct GameSyncArgs {
-    struct PlayerInfo * player;
+struct GameSyncArgs
+{
+    // cppcheck-suppress unusedStructMember
+    struct PlayerInfo *player;
+    // cppcheck-suppress unusedStructMember
     int sock_fd;
+    // cppcheck-suppress unusedStructMember
     struct sockaddr_in *peeraddr;
+    // cppcheck-suppress unusedStructMember
     uint16_t *playing;
+    // cppcheck-suppress unusedStructMember
     pthread_mutex_t *lock;
 };
 
