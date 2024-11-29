@@ -21,7 +21,7 @@ int init_screen(WINDOW **win, int x_boundary, int y_boundary)
 int print_message_window(WINDOW *win, const char *msg, int y, int x)
 {
     // printf("%i\n", win == NULL);
-    if(mvwprintw(win, y, x, msg))
+    if(mvwprintw(win, y, x, "%s", msg))
     {    // add err message/print for both
         return 1;
     }

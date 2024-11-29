@@ -4,6 +4,10 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-default"
+#include <SDL2/SDL.h>
+#pragma GCC diagnostic pop
 
 int  handle_pressed_char(int pressed_char, struct PlayerInfo *my_player, pthread_mutex_t *lock);
 void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x);
@@ -112,21 +116,25 @@ void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x)
         case 'W':
         case 'w':
         case KEY_UP:
+        case SDL_CONTROLLER_BUTTON_DPAD_UP:
             *mov_y = 1;
             break;
         case 'S':
         case 's':
         case KEY_DOWN:
+        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
             *mov_y = -1;
             break;
         case 'A':
         case 'a':
         case KEY_LEFT:
+        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
             *mov_x = -1;
             break;
         case 'D':
         case 'd':
         case KEY_RIGHT:
+        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
             *mov_x = 1;
             break;
         default:    // do nothing
@@ -226,6 +234,94 @@ void *handle_peer_routine(void *thread_args)
         {
             *(args->playing) = false;
             *return_val      = EXIT_FAILURE;
+        }
+    }
+    return return_val;
+}
+
+void *controller_routine(void *thread_args)
+{
+    struct GameSyncArgs *args;
+    int                 *return_val;
+    SDL_GameController  *controller;
+    SDL_Event            event;
+
+    return_val = (int *)malloc(sizeof(int));
+    if(return_val == NULL)
+    {
+        fprintf(stderr, "Malloc failed to allocate memory\n");
+        return NULL;
+    }
+
+    *return_val = EXIT_SUCCESS;
+    args        = (struct GameSyncArgs *)thread_args;
+
+    if(SDL_Init(SDL_INIT_GAMECONTROLLER) != 0)
+    {
+        printf("SDL_Init Error: %s\n", SDL_GetError());
+        *return_val = -1;
+    }
+
+    controller = NULL;
+    if(SDL_NumJoysticks() > 0)
+    {
+        controller = SDL_GameControllerOpen(0);
+        if(!controller)
+        {
+            printf("Could not open game controller: %s\n", SDL_GetError());
+            *return_val = -1;
+            SDL_Quit();
+            *(args->playing) = 0;
+        }
+    }
+    else
+    {
+        printf("No game controllers connected.\n");
+        *return_val = -1;
+        SDL_Quit();
+        *(args->playing) = 0;
+    }
+
+    while(*(args->playing))
+    {
+        int received_char;
+        int handle_char_res;
+
+        received_char = -1;
+        while(SDL_PollEvent(&event))
+        {
+            if(event.type == SDL_QUIT)
+            {
+                SDL_Quit();
+                SDL_GameControllerClose(controller);
+                *(args->playing) = 0;
+            }
+            if(event.type == SDL_CONTROLLERBUTTONDOWN || event.type == SDL_CONTROLLERBUTTONUP)
+            {
+                // printf("Button event: button %d %s\n", event.cbutton.button, event.type == SDL_CONTROLLERBUTTONDOWN ? "pressed" : "released");
+                if(event.type == SDL_CONTROLLERBUTTONDOWN)
+                {
+                    received_char = event.cbutton.button;
+                }
+            }
+            if(event.type == SDL_CONTROLLERAXISMOTION)
+            {
+                // printf("Axis event: axis %d  position %d\n", event.caxis.axis, event.caxis.value);
+            }
+        }
+
+        handle_char_res = handle_pressed_char(received_char, args->player, args->lock);
+        if(handle_char_res == 1)
+        {
+            *(args->playing) = 0;
+            *return_val      = EXIT_FAILURE;
+            return return_val;
+        }
+        if(handle_char_res == 0 && send_player_info(args->sock_fd, args->player, args->peeraddr))
+        {
+            *(args->playing) = 0;
+            *return_val      = EXIT_FAILURE;
+            return return_val;
         }
     }
     return return_val;
