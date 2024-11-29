@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
     wait_for_connection(&game_data);    // need var to get result, check result
 
-    getch();
+    play_game(&game_data, thread_func);
 
 exit_label:
     return ret;

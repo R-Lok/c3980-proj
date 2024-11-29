@@ -110,22 +110,18 @@ void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x)
     {
         case 'W':
         case 'w':
-        case KEY_UP:
             *mov_y = 1;
             break;
         case 'S':
         case 's':
-        case KEY_DOWN:
             *mov_y = -1;
             break;
         case 'A':
         case 'a':
-        case KEY_LEFT:
             *mov_x = -1;
             break;
         case 'D':
         case 'd':
-        case KEY_RIGHT:
             *mov_x = 1;
             break;
         default:    // do nothing
@@ -199,4 +195,28 @@ int init_mutex(pthread_mutex_t *lock)
         ret = 1;
     }
     return ret;
+}
+
+void *handle_peer_routine(void *thread_args)
+{
+    struct GameSyncArgs *args;
+    int                 *return_val = (int *)malloc(sizeof(int));
+    if(return_val == NULL)
+    {
+        fprintf(stderr, "Malloc failed to allocate memory\n");
+        return NULL;
+    }
+    *return_val = EXIT_SUCCESS;
+
+    args = (struct GameSyncArgs *)thread_args;
+
+    while(*(args->playing))
+    {
+        if(receive_player_info(args->sock_fd, args->peeraddr, args->player, args->lock))
+        {
+            *(args->playing) = false;
+            *return_val      = EXIT_FAILURE;
+        }
+    }
+    return return_val;
 }

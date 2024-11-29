@@ -42,3 +42,25 @@ int clear_window(WINDOW *win)
     }
     return 0;
 }
+
+int print_player_position(struct PlayerInfo *player, uint16_t *prev_y, uint16_t *prev_x, WINDOW *win, pthread_mutex_t *lock)
+{
+    if(pthread_mutex_lock(lock))
+    {
+        fprintf(stdout, "pthread_mutex_lock error\n");
+        return 1;
+    }
+    if(*prev_x != player->x && *prev_y != player->y)
+    {
+        mvwprintw(win, *prev_y, *prev_x, " ");
+        mvwprintw(win, player->x, player->y, "*");
+        *prev_y = player->y;
+        *prev_x = player->x;
+    }
+    if(pthread_mutex_unlock(lock))
+    {
+        fprintf(stdout, "pthread_mutex_unlock error\n");
+        return 1;
+    }
+    return 0;
+}

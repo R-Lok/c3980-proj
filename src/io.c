@@ -112,7 +112,8 @@ int receive_player_info(int sock_fd, struct sockaddr_in *peer_addr, struct Playe
     unpickle_player(pickled_player, &received_player);
     if(is_stale_data(&received_player, peer_player) == 0)
     {
-        if(lock != NULL && pthread_mutex_lock(lock)) {
+        if(lock != NULL && pthread_mutex_lock(lock))
+        {
             fprintf(stderr, "Error locking mutex\n");
             return 1;
         }
