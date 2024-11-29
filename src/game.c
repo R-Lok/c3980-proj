@@ -43,7 +43,6 @@ int wait_for_connection(struct GameData *gd)
         // print an err message
         return 1;
     }
-    wrefresh(gd->win);
     if(gd->playing == 0)    // deal with this (SIGINT later)
     {
         return 2;
@@ -121,9 +120,9 @@ int play_game(struct GameData *data, input_handler input_thread_func)
 
     while(*(data->playing))
     {
-        wrefresh(data->win);
         print_player_position(data->my_player, &my_last_y, &my_last_x, data->win, &my_player_mutex);
         print_player_position(data->peer_player, &peer_last_y, &peer_last_x, data->win, &peer_mutex);
+        wrefresh(data->win);
     }
 
     thread_join_res = pthread_join(ctrl_thread, &ctrl_thread_res);

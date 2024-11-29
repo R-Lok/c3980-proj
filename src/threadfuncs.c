@@ -61,12 +61,12 @@ int handle_pressed_char(const int pressed_char, struct PlayerInfo *my_player, pt
         return -1;    // return -1 to indicate no change in position
     }
 
-    if((mov_x == 1 && my_player->x == X_BOUNDARY) || (mov_x == -1 && my_player->x == X_BOUNDARY_MIN))
+    if((mov_x == 1 && my_player->x == X_BOUNDARY - 1) || (mov_x == -1 && my_player->x == X_BOUNDARY_MIN + 1))
     {
         return -1;    // no change in position, running into wall
     }
 
-    if((mov_y == 1 && my_player->y == Y_BOUNDARY) || (mov_y == -1 && my_player->y == Y_BOUNDARY_MIN))
+    if((mov_y == 1 && my_player->y == Y_BOUNDARY_MIN + 1) || (mov_y == -1 && my_player->y == Y_BOUNDARY - 1))
     {
         return -1;    // no change in position, running into wall
     }
@@ -78,11 +78,11 @@ int handle_pressed_char(const int pressed_char, struct PlayerInfo *my_player, pt
     }
     if(mov_y == 1)
     {
-        (my_player->y)++;
+        (my_player->y)--;
     }
     else if(mov_y == -1)
     {
-        (my_player->y)--;
+        (my_player->y)++;
     }
 
     if(mov_x == 1)
@@ -110,18 +110,22 @@ void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x)
     {
         case 'W':
         case 'w':
+        case KEY_UP:
             *mov_y = 1;
             break;
         case 'S':
         case 's':
+        case KEY_DOWN:
             *mov_y = -1;
             break;
         case 'A':
         case 'a':
+        case KEY_LEFT:
             *mov_x = -1;
             break;
         case 'D':
         case 'd':
+        case KEY_RIGHT:
             *mov_x = 1;
             break;
         default:    // do nothing
