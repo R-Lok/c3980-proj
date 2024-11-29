@@ -46,6 +46,10 @@ int wait_for_connection(struct GameData *gd)
         // print an err message
         return 1;
     }
+
+    wclear(gd->win);
+    box(gd->win, 0, 0);
+
     if(gd->playing == 0)    // deal with this (SIGINT later)
     {
         return 2;
