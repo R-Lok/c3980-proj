@@ -4,10 +4,6 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch-default"
-#include <SDL2/SDL.h>
-#pragma GCC diagnostic pop
 
 int  handle_pressed_char(int pressed_char, struct PlayerInfo *my_player, pthread_mutex_t *lock);
 void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x);
