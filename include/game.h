@@ -52,7 +52,7 @@ struct GameSyncArgs
     pthread_mutex_t *lock;
 };
 
-void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_player, int x_boundary, int y_boundary);
+void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_player);
 int  wait_for_connection(struct GameData *gd);
 void populate_game_data(struct GameData *game_data, int sock_fd, struct sockaddr_in *peer_addr, struct PlayerInfo *my_player, struct PlayerInfo *peer_player, WINDOW *win, uint16_t *playing);
 int  play_game(struct GameData *data, input_handler input_thread_func);

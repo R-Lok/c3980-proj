@@ -6,13 +6,15 @@
 #include <time.h>
 #include <unistd.h>
 
-void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_player, const int x_boundary, const int y_boundary)
+void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_player)
 {
     memset(my_player, 0, sizeof(struct PlayerInfo));
     memset(peer_player, 0, sizeof(struct PlayerInfo));
 
-    my_player->x       = (uint16_t)(arc4random_uniform((uint32_t)x_boundary + 1));    // change to POSIX compliant random
-    my_player->y       = (uint16_t)(arc4random_uniform((uint32_t)y_boundary + 1));    // change to POSIX compliant random
+    srand((unsigned int)time(NULL));    // NOLINT(cert-msc32-c,cert-msc51-cpp)
+
+    my_player->x       = (uint16_t)((rand() % (X_BOUNDARY - 1)) + 1);    // change to POSIX compliant random
+    my_player->y       = (uint16_t)((rand() % (Y_BOUNDARY - 1)) + 1);    // change to POSIX compliant random
     my_player->playing = 1;
 }
 
