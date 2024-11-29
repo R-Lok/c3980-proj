@@ -33,6 +33,7 @@ int wait_for_connection(struct GameData *gd)
         // print an err message
         return 1;
     }
+    //uncomment below when testing the peer communication
     // if(receive_player_info(gd->sock_fd, gd->peer_addr, gd->peer_player, NULL))    // needs to deal with playing var
     // {
     //     // print an err message
