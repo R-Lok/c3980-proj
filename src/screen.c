@@ -3,8 +3,9 @@
 int init_screen(WINDOW **win, int x_boundary, int y_boundary)
 {
     initscr();
-    noecho();
     keypad(stdscr, TRUE);
+    noecho();
+    curs_set(0);
     *win = newwin(y_boundary + 1, x_boundary + 1, 0, 0);
     if(*win == NULL)
     {
@@ -51,10 +52,13 @@ int print_player_position(struct PlayerInfo *player, uint16_t *prev_y, uint16_t 
         fprintf(stdout, "pthread_mutex_lock error\n");
         return 1;
     }
-    mvwprintw(win, *prev_y, *prev_x, " ");
-    mvwprintw(win, player->y, player->x, "*");
-    *prev_y = player->y;
-    *prev_x = player->x;
+    if(*prev_x != player->x || *prev_y != player->y || player->seq_counter == 0)
+    {
+        mvwprintw(win, *prev_y, *prev_x, " ");
+        mvwprintw(win, player->y, player->x, "*");
+        *prev_y = player->y;
+        *prev_x = player->x;
+    }
     if(pthread_mutex_unlock(lock))
     {
         fprintf(stdout, "pthread_mutex_unlock error\n");
