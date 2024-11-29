@@ -3,6 +3,7 @@
 #include "../include/io.h"
 #include <ncurses.h>
 #include <stdlib.h>
+#include <time.h>
 
 int  handle_pressed_char(int pressed_char, struct PlayerInfo *my_player, pthread_mutex_t *lock);
 void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x);
@@ -137,7 +138,11 @@ void *timer_routine(void *thread_args)
 {
     struct GameSyncArgs *args;
     int                 *return_val;
+    struct timespec      ts;
+    const long           delay = 50000000;
 
+    ts.tv_sec  = 0;
+    ts.tv_nsec = delay;
     args       = (struct GameSyncArgs *)thread_args;
     return_val = (int *)malloc(sizeof(int));
     if(return_val == NULL)
@@ -169,6 +174,7 @@ void *timer_routine(void *thread_args)
             *return_val      = EXIT_FAILURE;
             return return_val;
         }
+        nanosleep(&ts, NULL);
     }
     return return_val;
 }
