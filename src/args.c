@@ -46,7 +46,7 @@ int parse_input_type(const char *str, input_handler *thread_func)
     }
     if(strcasecmp(str, "controller") == 0)
     {
-        *thread_func = NULL;    // change when controller is implemented.
+        *thread_func = controller_routine;
         return 0;
     }
     if(strcasecmp(str, "timer") == 0)
