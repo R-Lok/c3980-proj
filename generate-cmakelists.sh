@@ -47,6 +47,7 @@ generate_cmake_content() {
 
     # Add executable
     echo "add_executable($entity \${${entity}_SOURCES})" >> "$output_file"
+    echo "target_include_directories($entity PRIVATE /usr/local/include) " >> "$output_file"
     echo "target_include_directories($entity PUBLIC \${CMAKE_SOURCE_DIR}/include)" >> "$output_file"
 
     # Handle libraries
@@ -343,8 +344,6 @@ generate_cmake_content() {
   echo ")" >> "$output_file"
   echo "" >> "$output_file"
   echo "add_dependencies($first_target format)" >> "$output_file"
-  # Add dependencies for the first target
-  echo "add_dependencies($first_target format)" >> "$output_file"
   echo "" >> "$output_file"
 
   # clang-tidy integration
@@ -363,7 +362,13 @@ generate_cmake_content() {
   echo "    # Add a custom target for clang --analyze" >> "$output_file"
   echo "    add_custom_command(" >> "$output_file"
   echo "        TARGET $first_target POST_BUILD" >> "$output_file"
-  echo "        COMMAND \${CMAKE_C_COMPILER} --analyzer-output text --analyze -Xclang -analyzer-checker=core --analyze -Xclang -analyzer-checker=deadcode -Xclang -analyzer-checker=security -Xclang -analyzer-disable-checker=security.insecureAPI.DeprecatedOrUnsafeBufferHandling -Xclang -analyzer-checker=unix -Xclang -analyzer-checker=unix \${CMAKE_C_FLAGS} \${STANDARD_FLAGS} -I\${CMAKE_SOURCE_DIR}/include -I/usr/local/include \${SOURCES} \${HEADERS}" >> "$output_file"
+  echo "        COMMAND \${CMAKE_C_COMPILER} --analyzer-output text --analyze -Xclang -analyzer-checker=core --analyze -Xclang -analyzer-checker=deadcode -Xclang -analyzer-checker=security -Xclang -analyzer-disable-checker=security.insecureAPI.DeprecatedOrUnsafeBufferHandling -Xclang -analyzer-checker=unix -Xclang -analyzer-checker=unix \${CMAKE_C_FLAGS} \${STANDARD_FLAGS} -I\${CMAKE_SOURCE_DIR}/include -I/usr/local/include" >> "$output_file"
+  if $requires_sdl2; then
+    echo "             -isystem${sdl2_include_path}" >> "$output_file"
+  else
+    echo "" >> "$output_file"
+  fi
+  echo "             \${SOURCES} \${HEADERS}" >> "$output_file"
   echo "        WORKING_DIRECTORY \${CMAKE_SOURCE_DIR}" >> "$output_file"
   echo "        COMMENT \"Running clang --analyze\"" >> "$output_file"
   echo "    )" >> "$output_file"
