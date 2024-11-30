@@ -1,6 +1,8 @@
-#include "../include/io.h"
+#include "io.h"
 #include <errno.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 
 void pickle_player_info(const struct PlayerInfo *my_player, uint16_t *pickled_array);
 int  send_full(int sock_fd, const uint16_t *pickled_player, size_t pickle_bytelength, const struct sockaddr_in *peer_addr);

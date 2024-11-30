@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <unistd.h>
 
 int setup_addrs(struct sockaddr_in *my_addr, struct sockaddr_in *peer_addr, char *peer_str_addr, in_port_t port, int *err)
