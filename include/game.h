@@ -3,6 +3,7 @@
 #include "../include/threadfuncs.h"
 #include <ncurses.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include <stdint.h>
 
 #define X_BOUNDARY 100
