@@ -6,11 +6,16 @@
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define DEFAULT_PORT 9999
 #define NCURSES_ERROR 1001
 
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+static volatile sig_atomic_t playing = 1;
+
 void printError(int err, const char *msg);
+void handle_signal(int signal);
 
 int main(int argc, char **argv)
 {
@@ -23,7 +28,6 @@ int main(int argc, char **argv)
     int                ret;
     int                socket_fd;
     WINDOW            *win;
-    uint16_t           playing;
 
     struct PlayerInfo my_player;
     struct PlayerInfo peer_player;
@@ -34,7 +38,8 @@ int main(int argc, char **argv)
     peer_str_addr = NULL;
     thread_func   = NULL;
     win           = NULL;
-    playing       = 1;
+
+    signal(SIGINT, handle_signal);
 
     if(parse_args(argc, argv, &peer_str_addr, &thread_func, &err))
     {
@@ -72,10 +77,17 @@ int main(int argc, char **argv)
 
     populate_game_data(&game_data, socket_fd, &peer_addr, &my_player, &peer_player, win, &playing);
 
-    wait_for_connection(&game_data);    // need var to get result, check result
+    ret = wait_for_connection(&game_data);
+    if(playing == 0 || ret != 0)
+    {
+        goto done;
+    }
 
-    play_game(&game_data, thread_func);
-
+    ret = play_game(&game_data, thread_func);
+done:
+    close(socket_fd);
+    delwin(win);
+    endwin();
 exit_label:
     return ret;
 }
@@ -88,4 +100,12 @@ void printError(int err, const char *msg)
         return;
     }
     fprintf(stderr, "Error: %s :%s\n", msg, strerror(err));
+}
+
+void handle_signal(int signal)
+{
+    if(signal == SIGINT)
+    {
+        playing = 0;
+    }
 }

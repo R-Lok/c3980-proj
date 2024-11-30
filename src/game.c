@@ -10,6 +10,7 @@ void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_
 {
     memset(my_player, 0, sizeof(struct PlayerInfo));
     memset(peer_player, 0, sizeof(struct PlayerInfo));
+    peer_player->playing = 1;
 
     srand((unsigned int)time(NULL));    // NOLINT(cert-msc32-c,cert-msc51-cpp)
 
@@ -20,12 +21,9 @@ void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_
 
 int wait_for_connection(struct GameData *gd)
 {
-    int         x_boundary;
-    int         y_boundary;
     const char *msg = "Waiting for connection...";
     // printf("%i\n", win == NULL);
-    getmaxyx(gd->win, y_boundary, x_boundary);
-    if(print_message_window(gd->win, msg, y_boundary / 2, (x_boundary - (int)strlen(msg)) / 2))
+    if(print_message_window(gd->win, msg))
     {
         // print an err message
         return 1;
@@ -36,11 +34,11 @@ int wait_for_connection(struct GameData *gd)
         return 1;
     }
     // uncomment below when testing the peer communication
-    if(receive_player_info(gd->sock_fd, gd->peer_addr, gd->peer_player, NULL))    // needs to deal with playing var
-    {
-        // print an err message
-        return 1;
-    }
+    // if(receive_player_info(gd->sock_fd, gd->peer_addr, gd->peer_player, NULL, gd->playing))    // needs to deal with playing var
+    // {
+    //     // print an err message
+    //     return 1;
+    // }
     if(send_player_info(gd->sock_fd, gd->my_player, gd->peer_addr))    // redunant sending of my_player again in case peer opened program after first send
     {
         // print an err message
@@ -57,7 +55,7 @@ int wait_for_connection(struct GameData *gd)
     return 0;
 }
 
-void populate_game_data(struct GameData *game_data, int sock_fd, struct sockaddr_in *peer_addr, struct PlayerInfo *my_player, struct PlayerInfo *peer_player, WINDOW *win, uint16_t *playing)
+void populate_game_data(struct GameData *game_data, int sock_fd, struct sockaddr_in *peer_addr, struct PlayerInfo *my_player, struct PlayerInfo *peer_player, WINDOW *win, volatile sig_atomic_t *playing)
 {
     game_data->sock_fd     = sock_fd;
     game_data->peer_addr   = peer_addr;
@@ -131,12 +129,14 @@ int play_game(struct GameData *data, input_handler input_thread_func)
         print_player_position(data->peer_player, &peer_last_y, &peer_last_x, data->win, &peer_mutex);
         wrefresh(data->win);
     }
-
+    print_end_message(data->win, data->peer_player->playing);
     thread_join_res = pthread_join(ctrl_thread, &ctrl_thread_res);
     process_thread_res(thread_join_res, *((int *)ctrl_thread_res), &ret);
+    printf("Thread join 1 done\n");
 thread_fail_2:
     thread_join_res = pthread_join(peer_thread, &peer_thread_res);
     process_thread_res(thread_join_res, *((int *)peer_thread_res), &ret);
+    printf("Thread join 2 done\n");
 thread_fail:
     *(data->playing)         = 0;
     data->my_player->playing = 0;

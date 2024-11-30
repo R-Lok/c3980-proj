@@ -6,7 +6,7 @@
 
 void pickle_player_info(const struct PlayerInfo *my_player, uint16_t *pickled_array);
 int  send_full(int sock_fd, const uint16_t *pickled_player, size_t pickle_bytelength, const struct sockaddr_in *peer_addr);
-int  read_full(int sock_fd, struct sockaddr_in *peer_addr, uint16_t *pickled_player, size_t bytes_to_read);
+int  read_full(int sock_fd, struct sockaddr_in *peer_addr, uint16_t *pickled_player, size_t bytes_to_read, const volatile sig_atomic_t *playing);
 void unpickle_player(const uint16_t *pickled_player, struct PlayerInfo *received_player);
 int  is_stale_data(const struct PlayerInfo *received_player, const struct PlayerInfo *peer_player);
 
@@ -54,7 +54,7 @@ int send_player_info(int sock_fd, const struct PlayerInfo *my_player, const stru
     return 0;
 }
 
-int read_full(int sock_fd, struct sockaddr_in *peer_addr, uint16_t *pickled_player, size_t bytes_to_read)
+int read_full(int sock_fd, struct sockaddr_in *peer_addr, uint16_t *pickled_player, size_t bytes_to_read, const volatile sig_atomic_t *playing)
 {
     size_t    tread;
     socklen_t addr_len;
@@ -67,8 +67,12 @@ int read_full(int sock_fd, struct sockaddr_in *peer_addr, uint16_t *pickled_play
         nread = recvfrom(sock_fd, (char *)pickled_player + tread, bytes_to_read - tread, 0, (struct sockaddr *)peer_addr, &addr_len);
         if(nread == -1)
         {
-            if(errno == EINTR)
+            if(errno == EINTR || errno == EAGAIN)
             {
+                if(*playing == 0)
+                {
+                    return 1;
+                }
                 errno = 0;
                 continue;
             }
@@ -100,15 +104,21 @@ int is_stale_data(const struct PlayerInfo *received_player, const struct PlayerI
     return 0;
 }
 
-int receive_player_info(int sock_fd, struct sockaddr_in *peer_addr, struct PlayerInfo *peer_player, pthread_mutex_t *lock)
+int receive_player_info(int sock_fd, struct sockaddr_in *peer_addr, struct PlayerInfo *peer_player, pthread_mutex_t *lock, const volatile sig_atomic_t *playing)
 {
     uint16_t          pickled_player[4];
     struct PlayerInfo received_player;
+    int               read_full_res;
     memset(&received_player, 0, sizeof(struct PlayerInfo));
 
-    if(read_full(sock_fd, peer_addr, pickled_player, sizeof(pickled_player)) == -1)
+    read_full_res = read_full(sock_fd, peer_addr, pickled_player, sizeof(pickled_player), playing);
+    if(read_full_res == -1)
     {
         return 1;
+    }
+    if(read_full_res == 1)
+    {    // No longer playing
+        return 0;
     }
 
     unpickle_player(pickled_player, &received_player);

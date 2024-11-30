@@ -224,9 +224,9 @@ void *handle_peer_routine(void *thread_args)
 
     args = (struct GameSyncArgs *)thread_args;
 
-    while(*(args->playing))
+    while(*(args->playing) != 0)
     {
-        if(receive_player_info(args->sock_fd, args->peeraddr, args->player, args->lock))
+        if(receive_player_info(args->sock_fd, args->peeraddr, args->player, args->lock, args->playing))
         {
             *(args->playing) = false;
             *return_val      = EXIT_FAILURE;

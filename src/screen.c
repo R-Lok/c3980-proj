@@ -5,6 +5,7 @@ int init_screen(WINDOW **win, int x_boundary, int y_boundary)
     initscr();
     keypad(stdscr, TRUE);
     noecho();
+    cbreak();
     curs_set(0);
     *win = newwin(y_boundary + 1, x_boundary + 1, 0, 0);
     if(*win == NULL)
@@ -18,9 +19,13 @@ int init_screen(WINDOW **win, int x_boundary, int y_boundary)
     return 0;
 }
 
-int print_message_window(WINDOW *win, const char *msg, int y, int x)
+int print_message_window(WINDOW *win, const char *msg)
 {
-    // printf("%i\n", win == NULL);
+    int x;
+    int y;
+
+    x = (X_BOUNDARY - (int)strlen(msg)) / 2;
+    y = Y_BOUNDARY / 2;
     if(mvwprintw(win, y, x, "%s", msg))
     {    // add err message/print for both
         return 1;
@@ -62,4 +67,16 @@ int print_player_position(struct PlayerInfo *player, uint16_t *prev_y, uint16_t 
         return 1;
     }
     return 0;
+}
+
+void print_end_message(WINDOW *win, uint16_t is_peer_playing)
+{
+    if(is_peer_playing == 0)
+    {
+        print_message_window(win, "Other player disconnected - Press any key to exit.");
+    }
+    else
+    {
+        print_message_window(win, "Ended session - Press any key to exit.");
+    }
 }
