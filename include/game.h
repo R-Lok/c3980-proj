@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 #define X_BOUNDARY 100
-#define Y_BOUNDARY 50
+#define Y_BOUNDARY 40
 #define X_BOUNDARY_MIN 0
 #define Y_BOUNDARY_MIN 0
 
