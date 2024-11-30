@@ -104,7 +104,7 @@ int is_stale_data(const struct PlayerInfo *received_player, const struct PlayerI
     return 0;
 }
 
-int receive_player_info(int sock_fd, struct sockaddr_in *peer_addr, struct PlayerInfo *peer_player, pthread_mutex_t *lock, const volatile sig_atomic_t *playing)
+int receive_player_info(int sock_fd, struct sockaddr_in *peer_addr, struct PlayerInfo *peer_player, pthread_mutex_t *lock, volatile sig_atomic_t *playing)
 {
     uint16_t          pickled_player[4];
     struct PlayerInfo received_player;
@@ -137,6 +137,10 @@ int receive_player_info(int sock_fd, struct sockaddr_in *peer_addr, struct Playe
         {
             fprintf(stderr, "Error unlocking mutex\n");
             return 1;
+        }
+        if(received_player.playing == 0)
+        {
+            *playing = 0;
         }
     }
     return 0;
