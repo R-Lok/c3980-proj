@@ -132,12 +132,12 @@ int play_game(struct GameData *data, input_handler input_thread_func)
     print_end_message(data->win, data->peer_player->playing);
     thread_join_res = pthread_join(ctrl_thread, &ctrl_thread_res);
     process_thread_res(thread_join_res, *((int *)ctrl_thread_res), &ret);
-    free(ctrl_thread_res);
+    free((int *)ctrl_thread_res);
     printf("Thread join 1 done\n");
 thread_fail_2:
     thread_join_res = pthread_join(peer_thread, &peer_thread_res);
     process_thread_res(thread_join_res, *((int *)peer_thread_res), &ret);
-    free(peer_thread_res);
+    free((int *)peer_thread_res);
     printf("Thread join 2 done\n");
 thread_fail:
     *(data->playing)         = 0;
