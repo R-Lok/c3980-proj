@@ -27,6 +27,7 @@ int parse_args(int argc, char **argv, char **peer_str_addr, input_handler *threa
                 break;
             case ':':
                 *err = EINVAL;
+                perror("Input flag(s) missing argument");
                 return 1;
             default:
                 *err = EINVAL;
@@ -54,14 +55,22 @@ int parse_input_type(const char *str, input_handler *thread_func)
         *thread_func = timer_routine;
         return 0;
     }
+    fprintf(stderr, "Please enter a valid control scheme\n");
     return 1;
 }
 
 int check_args(const char *peer_str_addr, const input_handler *thread_func, int *err)
 {
-    if(peer_str_addr == NULL || *thread_func == NULL)
+    if(peer_str_addr == NULL)
     {
         *err = EINVAL;
+        fprintf(stdout, "No address entered, terminating...\n");
+        return 1;
+    }
+    if(*thread_func == NULL)
+    {
+        *err = EINVAL;
+        fprintf(stdout, "No control scheme entered, terminating...\n");
         return 1;
     }
     return 0;

@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
     if(parse_args(argc, argv, &peer_str_addr, &thread_func, &err))
     {
-        printError(err, "Error parsing arguments\n");
+        printError(err, "Invalid/Missing arguments");
         usage();
         ret = EXIT_FAILURE;
         goto exit_label;
