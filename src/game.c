@@ -25,33 +25,28 @@ int wait_for_connection(struct GameData *gd)
     // printf("%i\n", win == NULL);
     if(print_message_window(gd->win, msg))
     {
-        // print an err message
+        // error message already printed within print_message_window call
         return 1;
     }
     if(send_player_info(gd->sock_fd, gd->my_player, gd->peer_addr))
     {
-        // print an err message
+        // error msg already printed within send_player_info
         return 1;
     }
-    // uncomment below when testing the peer communication
-    if(receive_player_info(gd->sock_fd, gd->peer_addr, gd->peer_player, NULL, gd->playing))    // needs to deal with playing var
+    if(receive_player_info(gd->sock_fd, gd->peer_addr, gd->peer_player, NULL, gd->playing))
     {
-        // print an err message
+        // error already printed within receive_player_info call
         return 1;
     }
     if(send_player_info(gd->sock_fd, gd->my_player, gd->peer_addr))    // redunant sending of my_player again in case peer opened program after first send
     {
-        // print an err message
+        // error msg already printed within send_player_info
         return 1;
     }
 
     wclear(gd->win);
     box(gd->win, 0, 0);
 
-    if(gd->playing == 0)    // deal with this (SIGINT later)
-    {
-        return 2;
-    }
     return 0;
 }
 
@@ -95,7 +90,7 @@ int play_game(struct GameData *data, input_handler input_thread_func)
         return EXIT_FAILURE;
     }
 
-    input_handler_args.player   = data->my_player;    // probably need to make a function for initalizing struct with args
+    input_handler_args.player   = data->my_player;
     input_handler_args.sock_fd  = data->sock_fd;
     input_handler_args.peeraddr = data->peer_addr;
     input_handler_args.playing  = data->playing;
@@ -133,12 +128,12 @@ int play_game(struct GameData *data, input_handler input_thread_func)
     thread_join_res = pthread_join(ctrl_thread, &ctrl_thread_res);
     process_thread_res(thread_join_res, *((int *)ctrl_thread_res), &ret);
     free((int *)ctrl_thread_res);
-    printf("Thread join 1 done\n");
+    // printf("Thread join 1 done\n");
 thread_fail_2:
     thread_join_res = pthread_join(peer_thread, &peer_thread_res);
     process_thread_res(thread_join_res, *((int *)peer_thread_res), &ret);
     free((int *)peer_thread_res);
-    printf("Thread join 2 done\n");
+    // printf("Thread join 2 done\n");
 thread_fail:
     *(data->playing)         = 0;
     data->my_player->playing = 0;

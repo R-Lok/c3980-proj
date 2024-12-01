@@ -27,11 +27,13 @@ int print_message_window(WINDOW *win, const char *msg)
     x = (X_BOUNDARY - (int)strlen(msg)) / 2;
     y = Y_BOUNDARY / 2;
     if(mvwprintw(win, y, x, "%s", msg))
-    {    // add err message/print for both
+    {
+        fprintf(stderr, "mvwprintw error (ncurses)\n");
         return 1;
     }
     if(wrefresh(win))
     {
+        fprintf(stderr, "print_message_window: wrefresh error (ncurses)\n");
         return 1;
     }
     return 0;
@@ -40,11 +42,13 @@ int print_message_window(WINDOW *win, const char *msg)
 int clear_window(WINDOW *win)
 {
     if(wclear(win))
-    {    // add err message/print for both
+    {
+        fprintf(stderr, "wclear error (ncurses)\n");
         return 1;
     }
     if(wrefresh(win))
     {
+        fprintf(stderr, "clear_window: wrefresh error (ncurses)\n");
         return 1;
     }
     return 0;

@@ -34,6 +34,7 @@ int send_full(int sock_fd, const uint16_t *pickled_player, size_t pickle_bytelen
                 errno = 0;
                 continue;
             }
+            perror("error returned from sendto()");
             return -1;
         }
         twrote += (size_t)nwrote;
@@ -49,6 +50,7 @@ int send_player_info(int sock_fd, const struct PlayerInfo *my_player, const stru
 
     if(send_full(sock_fd, pickled_player, sizeof(pickled_player), peer_addr) == -1)
     {
+        // error msg already printed within send_full
         return 1;
     }
     return 0;
@@ -76,6 +78,7 @@ int read_full(int sock_fd, struct sockaddr_in *peer_addr, uint16_t *pickled_play
                 errno = 0;
                 continue;
             }
+            perror("recvfrom error");
             return -1;
         }
         tread += (size_t)nread;
@@ -114,6 +117,7 @@ int receive_player_info(int sock_fd, struct sockaddr_in *peer_addr, struct Playe
     read_full_res = read_full(sock_fd, peer_addr, pickled_player, sizeof(pickled_player), playing);
     if(read_full_res == -1)
     {
+        // error already printed in read_full
         return 1;
     }
     if(read_full_res == 1)

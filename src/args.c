@@ -30,7 +30,7 @@ int parse_args(int argc, char **argv, char **peer_str_addr, input_handler *threa
                 return 1;
             default:
                 *err = EINVAL;
-                fprintf(stderr, "Unrecognized flag: %c, terminating..", optopt);
+                fprintf(stderr, "Unrecognized flag: %c, terminating..\n", optopt);
                 return 1;
         }
     }
@@ -69,5 +69,5 @@ int check_args(const char *peer_str_addr, const input_handler *thread_func, int 
 
 void usage(void)
 {
-    printf("Usage: ");    // remember to fill in
+    printf("Usage: ./build/main -a <IPv4 Address> -i <keyboard/timer/controller>\n");
 }
