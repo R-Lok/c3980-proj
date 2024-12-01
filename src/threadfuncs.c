@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define FIFTY 50            // 50 ms
+#define FIVE_HUNDRED 500    // 500 ms
+
 int  handle_pressed_char(int pressed_char, struct PlayerInfo *my_player, pthread_mutex_t *lock);
 void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x);
 
@@ -241,6 +244,7 @@ void *controller_routine(void *thread_args)
     int                 *return_val;
     SDL_GameController  *controller;
     SDL_Event            event;
+    uint8_t              button;
 
     return_val = (int *)malloc(sizeof(int));
     if(return_val == NULL)
@@ -278,12 +282,20 @@ void *controller_routine(void *thread_args)
         *(args->playing) = 0;
     }
 
+    button = 0;
     while(*(args->playing))
     {
-        int received_char;
-        int handle_char_res;
+        int  received_char;
+        int  handle_char_res;
+        bool first_delay;
 
+        first_delay   = FALSE;
         received_char = -1;
+        if(button != 0)
+        {
+            SDL_Delay(FIFTY);
+            received_char = button;
+        }
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT)
@@ -298,6 +310,12 @@ void *controller_routine(void *thread_args)
                 if(event.type == SDL_CONTROLLERBUTTONDOWN)
                 {
                     received_char = event.cbutton.button;
+                    button        = event.cbutton.button;
+                    first_delay   = TRUE;
+                }
+                if(event.type == SDL_CONTROLLERBUTTONUP)
+                {
+                    button = 0;
                 }
             }
             if(event.type == SDL_CONTROLLERAXISMOTION)
@@ -311,14 +329,25 @@ void *controller_routine(void *thread_args)
         {
             *(args->playing) = 0;
             *return_val      = EXIT_FAILURE;
+            SDL_Quit();
+            SDL_GameControllerClose(controller);
             return return_val;
         }
         if(handle_char_res == 0 && send_player_info(args->sock_fd, args->player, args->peeraddr))
         {
             *(args->playing) = 0;
             *return_val      = EXIT_FAILURE;
+            SDL_Quit();
+            SDL_GameControllerClose(controller);
             return return_val;
         }
+        if(first_delay)
+        {
+            SDL_Delay(FIVE_HUNDRED);
+        }
     }
+
+    SDL_Quit();
+    SDL_GameControllerClose(controller);
     return return_val;
 }
