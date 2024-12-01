@@ -14,8 +14,8 @@ void setup_player_structs(struct PlayerInfo *my_player, struct PlayerInfo *peer_
 
     srand((unsigned int)time(NULL));    // NOLINT(cert-msc32-c,cert-msc51-cpp)
 
-    my_player->x       = (uint16_t)((rand() % (X_BOUNDARY - 1)) + 1);    // change to POSIX compliant random
-    my_player->y       = (uint16_t)((rand() % (Y_BOUNDARY - 1)) + 1);    // change to POSIX compliant random
+    my_player->x       = (uint16_t)((rand() % (X_BOUNDARY - 1)) + 1);    // generates a warning, but we don't care about the predictability of the spawn point.
+    my_player->y       = (uint16_t)((rand() % (Y_BOUNDARY - 1)) + 1);    // generates a warning, but we don't care about the predictability of the spawn point.
     my_player->playing = 1;
 }
 
