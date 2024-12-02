@@ -327,26 +327,23 @@ void *controller_routine(void *thread_args)
         handle_char_res = handle_pressed_char(received_char, args->player, args->lock);
         if(handle_char_res == 1)
         {
-            *(args->playing) = 0;
-            *return_val      = EXIT_FAILURE;
-            SDL_Quit();
-            SDL_GameControllerClose(controller);
-            return return_val;
+            goto error;
         }
         if(handle_char_res == 0 && send_player_info(args->sock_fd, args->player, args->peeraddr))
         {
-            *(args->playing) = 0;
-            *return_val      = EXIT_FAILURE;
-            SDL_Quit();
-            SDL_GameControllerClose(controller);
-            return return_val;
+            goto error;
         }
         if(first_delay)
         {
             SDL_Delay(FIVE_HUNDRED);
         }
     }
+    goto done;
 
+error:
+    *(args->playing) = 0;
+    *return_val      = EXIT_FAILURE;
+done:
     SDL_Quit();
     SDL_GameControllerClose(controller);
     return return_val;
