@@ -264,7 +264,7 @@ void *controller_routine(void *thread_args)
     if(SDL_Init(SDL_INIT_GAMECONTROLLER) != 0)
     {
         printf("SDL_Init Error: %s\n", SDL_GetError());
-        *return_val      = -1;
+        *return_val      = 1;
         *(args->playing) = 0;
     }
 
@@ -275,7 +275,7 @@ void *controller_routine(void *thread_args)
         if(!controller)
         {
             printf("Could not open game controller: %s\n", SDL_GetError());
-            *return_val = -2;
+            *return_val = 1;
             SDL_Quit();
             *(args->playing) = 0;
         }
@@ -283,7 +283,7 @@ void *controller_routine(void *thread_args)
     else
     {
         printf("No game controllers connected.\n");
-        *return_val = -3;
+        *return_val = 1;
         SDL_Quit();
         *(args->playing) = 0;
     }
@@ -349,7 +349,7 @@ error:
     *(args->playing) = 0;
     *return_val      = EXIT_FAILURE;
 done:
-    SDL_Quit();
     SDL_GameControllerClose(controller);
+    SDL_Quit();
     return return_val;
 }
