@@ -245,11 +245,11 @@ void *handle_peer_routine(void *thread_args)
 
 void *controller_routine(void *thread_args)
 {
-    struct GameSyncArgs *args;
-    int                 *return_val;
-    SDL_GameController  *controller;
-    SDL_Event            event;
-    uint8_t              button;
+    struct GameSyncArgs      *args;
+    int                      *return_val;
+    const SDL_GameController *controller;
+    SDL_Event                 event;
+    uint8_t                   button;
 
     return_val = (int *)malloc(sizeof(int));
     if(return_val == NULL)
@@ -275,17 +275,13 @@ void *controller_routine(void *thread_args)
         if(!controller)
         {
             printf("Could not open game controller: %s\n", SDL_GetError());
-            *return_val = 1;
-            SDL_Quit();
-            *(args->playing) = 0;
+            goto error;
         }
     }
     else
     {
         printf("No game controllers connected.\n");
-        *return_val = 1;
-        SDL_Quit();
-        *(args->playing) = 0;
+        goto error;
     }
 
     button = 0;
@@ -304,6 +300,10 @@ void *controller_routine(void *thread_args)
         }
         while(SDL_PollEvent(&event))
         {
+            if(event.type == SDL_QUIT)
+            {
+                goto error;
+            }
             if(event.type == SDL_CONTROLLERBUTTONDOWN || event.type == SDL_CONTROLLERBUTTONUP)
             {
                 // printf("Button event: button %d %s\n", event.cbutton.button, event.type == SDL_CONTROLLERBUTTONDOWN ? "pressed" : "released");
@@ -319,7 +319,6 @@ void *controller_routine(void *thread_args)
                 }
                 if(event.cbutton.button == SDL_CONTROLLER_BUTTON_START)
                 {
-                    *(args->playing) = 0;
                     goto done;
                 }
             }
@@ -346,10 +345,9 @@ void *controller_routine(void *thread_args)
     goto done;
 
 error:
-    *(args->playing) = 0;
-    *return_val      = EXIT_FAILURE;
+    *return_val = EXIT_FAILURE;
 done:
-    SDL_GameControllerClose(controller);
+    *(args->playing) = 0;
     SDL_Quit();
     return return_val;
 }
