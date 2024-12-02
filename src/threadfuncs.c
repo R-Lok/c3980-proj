@@ -265,7 +265,6 @@ void *controller_routine(void *thread_args)
     {
         printf("SDL_Init Error: %s\n", SDL_GetError());
         *return_val = -1;
-        SDL_Quit();
         *(args->playing) = 0;
     }
 
