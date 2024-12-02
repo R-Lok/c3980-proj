@@ -1,1 +1,1 @@
-main src/main.c src/args.c src/socket.c src/screen.c src/game.c src/io.c src/threadfuncs.c ncurses pthread SDL2
+main src/main.c src/args.c src/socket.c src/screen.c src/game.c src/io.c src/threadfuncs.c include/args.h include/socket.h include/screen.h include/game.h include/io.h ncurses pthread SDL2
