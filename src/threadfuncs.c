@@ -141,6 +141,9 @@ void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x)
         case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
             *mov_x = 1;
             break;
+        case SDL_CONTROLLER_BUTTON_START:
+            raise(SIGINT);
+            break;
         default:    // do nothing
             break;
     }
