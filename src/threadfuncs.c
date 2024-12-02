@@ -30,6 +30,11 @@ void *keyboard_routine(void *thread_args)
 
         received_char = getch();
 
+        if(*(args->playing) == 0)
+        {
+            return return_val;
+        }
+
         handle_char_res = handle_pressed_char(received_char, args->player, args->lock);
         if(handle_char_res == 1)
         {

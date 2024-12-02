@@ -137,6 +137,9 @@ thread_fail_2:
 thread_fail:
     *(data->playing)         = 0;
     data->my_player->playing = 0;
-    send_player_info(data->sock_fd, data->my_player, data->peer_addr);
+    if(data->peer_player->playing != 0)
+    {
+        send_player_info(data->sock_fd, data->my_player, data->peer_addr);
+    }
     return ret;
 }
