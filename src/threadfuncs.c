@@ -264,7 +264,7 @@ void *controller_routine(void *thread_args)
     if(SDL_Init(SDL_INIT_GAMECONTROLLER) != 0)
     {
         printf("SDL_Init Error: %s\n", SDL_GetError());
-        *return_val = -1;
+        *return_val      = -1;
         *(args->playing) = 0;
     }
 
