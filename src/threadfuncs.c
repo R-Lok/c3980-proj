@@ -141,9 +141,6 @@ void translate_key_to_movement(int pressed_char, int16_t *mov_y, int16_t *mov_x)
         case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
             *mov_x = 1;
             break;
-        case SDL_CONTROLLER_BUTTON_START:
-            raise(SIGINT);
-            break;
         default:    // do nothing
             break;
     }
@@ -306,12 +303,6 @@ void *controller_routine(void *thread_args)
         }
         while(SDL_PollEvent(&event))
         {
-            if(event.type == SDL_QUIT)
-            {
-                SDL_Quit();
-                SDL_GameControllerClose(controller);
-                *(args->playing) = 0;
-            }
             if(event.type == SDL_CONTROLLERBUTTONDOWN || event.type == SDL_CONTROLLERBUTTONUP)
             {
                 // printf("Button event: button %d %s\n", event.cbutton.button, event.type == SDL_CONTROLLERBUTTONDOWN ? "pressed" : "released");
@@ -324,6 +315,11 @@ void *controller_routine(void *thread_args)
                 if(event.type == SDL_CONTROLLERBUTTONUP)
                 {
                     button = 0;
+                }
+                if(event.cbutton.button == SDL_CONTROLLER_BUTTON_START)
+                {
+                    *(args->playing) = 0;
+                    goto done;
                 }
             }
             if(event.type == SDL_CONTROLLERAXISMOTION)
