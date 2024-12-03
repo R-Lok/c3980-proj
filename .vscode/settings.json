@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.ejs": "html",
-        "threadfuncs.h": "c"
+        "threadfuncs.h": "c",
+        "ncurses.h": "c"
     }
 }
