@@ -67,6 +67,7 @@ int main(int argc, char **argv)
     if(init_screen(&win, X_BOUNDARY, Y_BOUNDARY))
     {
         printError(NCURSES_ERROR, "Failed to allocate window using newwin()\n");
+        goto fail_screen;
     }
     // printf("win: %i\n", win == NULL);
 
@@ -85,9 +86,10 @@ int main(int argc, char **argv)
 
     ret = play_game(&game_data, thread_func);
 done:
-    close(socket_fd);
     delwin(win);
     endwin();
+fail_screen:
+    close(socket_fd);
 exit_label:
     return ret;
 }
