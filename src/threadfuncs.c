@@ -315,7 +315,9 @@ void *controller_routine(void *thread_args)
                 }
                 if(event.type == SDL_CONTROLLERBUTTONUP)
                 {
-                    button = 0;
+                    button        = 0;
+                    received_char = -1;
+                    first_delay   = FALSE;
                 }
                 if(event.cbutton.button == SDL_CONTROLLER_BUTTON_START)
                 {
